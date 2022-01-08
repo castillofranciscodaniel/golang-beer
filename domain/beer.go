@@ -2,7 +2,7 @@ package domain
 
 import (
 	"context"
-	"github.com/castillofranciscodaniel/golang-beers/pkg/err"
+	"github.com/castillofranciscodaniel/golang-beers/err"
 	"gopkg.in/guregu/null.v4"
 )
 

@@ -1,7 +1,7 @@
 package domain
 
 import (
-	err2 "github.com/castillofranciscodaniel/golang-beers/pkg/err"
+	err2 "github.com/castillofranciscodaniel/golang-beers/err"
 	"testing"
 )
 

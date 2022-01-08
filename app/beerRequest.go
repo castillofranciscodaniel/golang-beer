@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/castillofranciscodaniel/golang-beers/pkg/domain"
+	"github.com/castillofranciscodaniel/golang-beers/domain"
 )
 
 type BeerRequest struct {

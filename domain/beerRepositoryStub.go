@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 	"github.com/castillofranciscodaniel/golang-beers/config"
-	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
+	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
