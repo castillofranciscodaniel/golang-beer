@@ -34,21 +34,6 @@ func (m *MockBeerService) EXPECT() *MockBeerServiceMockRecorder {
 	return m.recorder
 }
 
-// ById mocks base method.
-func (m *MockBeerService) ById(arg0 int64) (*domain.Beer, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ById", arg0)
-	ret0, _ := ret[0].(*domain.Beer)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ById indicates an expected call of ById.
-func (mr *MockBeerServiceMockRecorder) ById(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ById", reflect.TypeOf((*MockBeerService)(nil).ById), arg0)
-}
-
 // Get mocks base method.
 func (m *MockBeerService) Get() ([]domain.Beer, error) {
 	m.ctrl.T.Helper()
@@ -62,6 +47,21 @@ func (m *MockBeerService) Get() ([]domain.Beer, error) {
 func (mr *MockBeerServiceMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockBeerService)(nil).Get))
+}
+
+// GetById mocks base method.
+func (m *MockBeerService) GetById(arg0 int64) (*domain.Beer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetById", arg0)
+	ret0, _ := ret[0].(*domain.Beer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetById indicates an expected call of GetById.
+func (mr *MockBeerServiceMockRecorder) GetById(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockBeerService)(nil).GetById), arg0)
 }
 
 // Post mocks base method.

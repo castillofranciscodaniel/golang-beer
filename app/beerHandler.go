@@ -81,7 +81,7 @@ func (b *BeerHandler) Post(w http.ResponseWriter, r *http.Request) {
 	WriteResponse(r.Context(), w, http.StatusCreated, nil)
 }
 
-func (b *BeerHandler) ById(w http.ResponseWriter, r *http.Request) {
+func (b *BeerHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.InitStr)
 
 	idParam := chi.URLParam(r, "beerId")
@@ -92,7 +92,7 @@ func (b *BeerHandler) ById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	beer, err := b.beersService.ById(id)
+	beer, err := b.beersService.GetById(id)
 	if err != nil {
 		WriteErrorResponse(r.Context(), w, err)
 		return

@@ -99,5 +99,5 @@ func (b *BeerSql) MapToDomain() (Beer, error) {
 type BeerRepository interface {
 	Get() ([]BeerSql, error)
 	Post(beer Beer) error
-	ById(id int64) (*BeerSql, error)
+	GetById(id int64) (*BeerSql, error)
 }

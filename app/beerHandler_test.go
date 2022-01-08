@@ -155,3 +155,22 @@ func Test_Post_should_return_beers_with_code_status_bad_request(t *testing.T) {
 		t.Error("Failed while testing the status code")
 	}
 }
+
+func Test_GetById_should_return_beers_with_code_status_ok(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+	beer, _ := domain.NewBeer(5, "Patagonia", "Norte", "Chile", 270, "CL")
+	mockService.EXPECT().GetById(int64(5)).Return(&beer, nil)
+
+	router.Post("/beers/{beerId:[0-9]+}", beerHandler.GetById)
+
+	request, _ := http.NewRequest(http.MethodPost, "/beers/5", nil)
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	if recorder.Code != http.StatusOK {
+		t.Error("Failed while testing the status code")
+	}
+}

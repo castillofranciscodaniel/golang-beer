@@ -13,7 +13,7 @@ const (
 
 	PostFunc = "Post"
 	GetFunc  = "Get"
-	ByIdFunc = "ById"
+	ByIdFunc = "GetById"
 
 	UniqueViolationSql = "unique_violation"
 )

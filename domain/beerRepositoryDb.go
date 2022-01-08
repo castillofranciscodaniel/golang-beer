@@ -86,7 +86,7 @@ func (b BeerRepositoryDb) Post(beer Beer) error {
 	return nil
 }
 
-func (b BeerRepositoryDb) ById(id int64) (*BeerSql, error) {
+func (b BeerRepositoryDb) GetById(id int64) (*BeerSql, error) {
 	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msgf(utils.InitStr)
 
 	var beer BeerSql

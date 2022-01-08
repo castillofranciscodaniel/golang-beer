@@ -16,7 +16,7 @@ const (
 type BeerService interface {
 	Get() ([]Beer, error)
 	Post(beerDto Beer) error
-	ById(id int64) (*Beer, error)
+	GetById(id int64) (*Beer, error)
 }
 
 type DefaultBeerService struct {
@@ -72,12 +72,12 @@ func (d DefaultBeerService) Post(beer Beer) error {
 	return err
 }
 
-func (d DefaultBeerService) ById(id int64) (*Beer, error) {
+func (d DefaultBeerService) GetById(id int64) (*Beer, error) {
 	d.log.Info().Str(utils.Method, utils.ByIdFunc).
 		Int64(productIdLog, id).
 		Msg(utils.InitStr)
 
-	beerSql, err := d.beersRepository.ById(id)
+	beerSql, err := d.beersRepository.GetById(id)
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return nil, err

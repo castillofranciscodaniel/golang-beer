@@ -34,7 +34,7 @@ func (b *BeerRepositoryStub) Post(beer Beer) error {
 	return nil
 }
 
-func (b *BeerRepositoryStub) ById(id int64) (*BeerSql, error) {
+func (b *BeerRepositoryStub) GetById(id int64) (*BeerSql, error) {
 	b.log.Info().Str(utils.Method, utils.PostFunc).Msgf(utils.InitStr)
 	b.log.Info().Str(utils.Method, utils.PostFunc).Send()
 	return nil, nil

@@ -26,7 +26,7 @@ func Start() {
 	routes.Route("/beers", func(r chi.Router) {
 		r.Get("/", container.BeerHandler.Get)
 		r.Post("/", container.BeerHandler.Post)
-		r.Get("/{beerId:[0-9]+}", container.BeerHandler.ById)
+		r.Get("/{beerId:[0-9]+}", container.BeerHandler.GetById)
 	})
 
 	log.Error().Err(http.ListenAndServe(":3000", routes)).Send()
