@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/castillofranciscodaniel/golang-beers/pkg/config"
-	domain2 "github.com/castillofranciscodaniel/golang-beers/pkg/domain"
+	"github.com/castillofranciscodaniel/golang-beers/config"
+	"github.com/castillofranciscodaniel/golang-beers/domain"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
@@ -35,8 +35,8 @@ func Start() {
 func InitializeServer() ContainerServiceImp {
 	healthHandler := NewHealthHandler()
 	dbManagerPostgres := config.NewDbManagerImpl()
-	beerRepositoryDb := domain2.NewBeersRepositoryDb(dbManagerPostgres)
-	beerService := domain2.NewBeersServiceImpl(beerRepositoryDb)
+	beerRepositoryDb := domain.NewBeersRepositoryDb(dbManagerPostgres)
+	beerService := domain.NewBeersServiceImpl(beerRepositoryDb)
 	beerHandler := NewBeersHandler(beerService)
 	containerServiceImp := NewContainerServiceImp(healthHandler, beerHandler)
 	return containerServiceImp

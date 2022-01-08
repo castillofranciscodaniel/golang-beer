@@ -4,25 +4,25 @@
 package main
 
 import (
-	app2 "github.com/castillofranciscodaniel/golang-beers/pkg/app"
-	config2 "github.com/castillofranciscodaniel/golang-beers/pkg/config"
-	domain2 "github.com/castillofranciscodaniel/golang-beers/pkg/domain"
+	"github.com/castillofranciscodaniel/golang-beers/app"
+	"github.com/castillofranciscodaniel/golang-beers/config"
+	"github.com/castillofranciscodaniel/golang-beers/domain"
 	"github.com/google/wire"
 )
 
-func InitializeServer() app2.ContainerServiceImp {
+func InitializeServer() app.ContainerServiceImp {
 	wire.Build(
 
-		wire.Bind(new(config2.DbManager), new(config2.DbManagerPostgres)),
-		wire.Bind(new(domain2.BeerRepository), new(domain2.BeerRepositoryDb)),
+		wire.Bind(new(config.DbManager), new(config.DbManagerPostgres)),
+		wire.Bind(new(domain.BeerRepository), new(domain.BeerRepositoryDb)),
 
-		config2.NewDbManagerImpl,
-		app2.NewHealthHandler,
-		domain2.NewBeersRepositoryDb,
-		domain2.NewBeersServiceImpl,
-		app2.NewBeersHandler,
-		app2.NewContainerServiceImp,
+		config.NewDbManagerImpl,
+		app.NewHealthHandler,
+		domain.NewBeersRepositoryDb,
+		domain.NewBeersServiceImpl,
+		app.NewBeersHandler,
+		app.NewContainerServiceImp,
 	)
 
-	return app2.ContainerServiceImp{}
+	return app.ContainerServiceImp{}
 }

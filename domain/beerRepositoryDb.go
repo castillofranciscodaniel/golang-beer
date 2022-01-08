@@ -3,9 +3,9 @@ package domain
 import (
 	"context"
 	"database/sql"
-	"github.com/castillofranciscodaniel/golang-beers/pkg/config"
-	err2 "github.com/castillofranciscodaniel/golang-beers/pkg/err"
-	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
+	"github.com/castillofranciscodaniel/golang-beers/config"
+	err2 "github.com/castillofranciscodaniel/golang-beers/err"
+	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/lib/pq"
 	"github.com/rs/zerolog"
