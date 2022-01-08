@@ -67,6 +67,36 @@ type BeerSql struct {
 	Currency null.String
 }
 
+func (b *BeerSql) MapToDomain() (Beer, error) {
+	var id int64
+	var name string
+	var brewery string
+	var country string
+	var price float64
+	var currency string
+
+	if b.Id.Valid {
+		id = b.Id.Int64
+	}
+	if b.Name.Valid {
+		name = b.Name.String
+	}
+	if b.Brewery.Valid {
+		brewery = b.Brewery.String
+	}
+	if b.Country.Valid {
+		country = b.Country.String
+	}
+	if b.Price.Valid {
+		price = b.Price.Float64
+	}
+	if b.Currency.Valid {
+		currency = b.Currency.String
+	}
+
+	return NewBeer(id, name, brewery, country, price, currency)
+}
+
 type BeerRepository interface {
 	Get(ctx context.Context) ([]BeerSql, error)
 	Post(ctx context.Context, beer Beer) error

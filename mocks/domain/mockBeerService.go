@@ -51,10 +51,10 @@ func (mr *MockBeerServiceMockRecorder) ById(arg0, arg1 interface{}) *gomock.Call
 }
 
 // Get mocks base method.
-func (m *MockBeerService) Get(arg0 context.Context) ([]domain.BeerSql, error) {
+func (m *MockBeerService) Get(arg0 context.Context) ([]domain.Beer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", arg0)
-	ret0, _ := ret[0].([]domain.BeerSql)
+	ret0, _ := ret[0].([]domain.Beer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
