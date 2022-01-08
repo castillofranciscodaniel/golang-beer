@@ -14,7 +14,7 @@ const (
 	productPriceLog = "productPrice"
 )
 
-//go:generate mockgen -destination=../mocks/service/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beer/domain BeerService
+//go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beer/domain BeerService
 type BeerService interface {
 	Get(ctx context.Context) ([]BeerSql, error)
 	Post(ctx context.Context, beerDto Beer) error
