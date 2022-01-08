@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/err"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -14,8 +15,15 @@ type Beer struct {
 	currency string
 }
 
-func NewBeer(id int64, name string, brewery string, country string, price float64, currency string) Beer {
-	// handler validations
+func NewBeer(id int64, name string, brewery string, country string, price float64, currency string) (Beer, error) {
+	if id < 0 {
+		return Beer{}, err.IdCanNotBeMinorThanOne
+	}
+
+	if id < 0 {
+		return Beer{}, err.PriceCanNotBeMinorThanZero
+	}
+
 	return Beer{
 		id:       id,
 		name:     name,
@@ -23,7 +31,7 @@ func NewBeer(id int64, name string, brewery string, country string, price float6
 		country:  country,
 		price:    price,
 		currency: currency,
-	}
+	}, nil
 }
 
 func (b *Beer) getId() int64 {

@@ -4,7 +4,7 @@ import (
 	"github.com/castillofranciscodaniel/golang-beers/pkg/domain"
 )
 
-type BeerDto struct {
+type BeerRequest struct {
 	Id       int64   `json:"Id"`
 	Name     string  `json:"Name"`
 	Brewery  string  `json:"Brewery"`
@@ -13,6 +13,6 @@ type BeerDto struct {
 	Currency string  `json:"Currency"`
 }
 
-func (b *BeerDto) MapToDomain() domain.Beer {
+func (b *BeerRequest) MapToDomain() (domain.Beer, error) {
 	return domain.NewBeer(b.Id, b.Name, b.Brewery, b.Country, b.Price, b.Currency)
 }
