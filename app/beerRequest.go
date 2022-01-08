@@ -18,12 +18,12 @@ func (b *BeerRequest) MapToDomain() (domain.Beer, error) {
 }
 
 func (b *BeerRequest) DomainToRequest(beer domain.Beer) BeerRequest {
-	return BeerRequest{
-		Id:       beer.GetId(),
-		Name:     beer.GetName(),
-		Brewery:  beer.GetBrewery(),
-		Country:  beer.GetCountry(),
-		Price:    beer.GetPrice(),
-		Currency: beer.GetCurrency(),
-	}
+
+	b.Id = beer.GetId()
+	b.Name = beer.GetName()
+	b.Brewery = beer.GetBrewery()
+	b.Country = beer.GetCountry()
+	b.Price = beer.GetPrice()
+	b.Currency = beer.GetCurrency()
+	return *b
 }

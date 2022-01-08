@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"context"
 	"github.com/castillofranciscodaniel/golang-beers/err"
 	"gopkg.in/guregu/null.v4"
 )
@@ -98,7 +97,7 @@ func (b *BeerSql) MapToDomain() (Beer, error) {
 }
 
 type BeerRepository interface {
-	Get(ctx context.Context) ([]BeerSql, error)
-	Post(ctx context.Context, beer Beer) error
-	ById(ctx context.Context, id int64) (*BeerSql, error)
+	Get() ([]BeerSql, error)
+	Post(beer Beer) error
+	ById(id int64) (*BeerSql, error)
 }

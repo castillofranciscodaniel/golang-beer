@@ -1,12 +1,10 @@
 package domain
 
 import (
-	"context"
 	"database/sql"
 	"github.com/castillofranciscodaniel/golang-beers/config"
 	err2 "github.com/castillofranciscodaniel/golang-beers/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -25,14 +23,14 @@ func NewBeersRepositoryDb(dbManager config.DbManager) BeerRepositoryDb {
 }
 
 // Get -
-func (b BeerRepositoryDb) Get(ctx context.Context) ([]BeerSql, error) {
-	b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Msgf(utils.InitStr)
+func (b BeerRepositoryDb) Get() ([]BeerSql, error) {
+	b.log.Info().Str(utils.Method, utils.GetFunc).Msgf(utils.InitStr)
 
 	query := `SELECT id, name, brewery, country, price, currency FROM beer`
-	rows, err := b.dbManager.DB().QueryContext(ctx, query)
+	rows, err := b.dbManager.DB().Query(query)
 
 	if rows.Err() != nil && err != nil {
-		b.log.Error().Err(err).Err(rows.Err()).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Send()
+		b.log.Error().Err(err).Err(rows.Err()).Str(utils.Method, utils.PostFunc).Send()
 		return nil, err
 	}
 
@@ -56,14 +54,14 @@ func (b BeerRepositoryDb) Get(ctx context.Context) ([]BeerSql, error) {
 		beersSql = append(beersSql, beer)
 	}
 
-	b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Send()
+	b.log.Info().Str(utils.Method, utils.GetFunc).Send()
 	return beersSql, nil
 }
 
 // Post -
-func (b BeerRepositoryDb) Post(ctx context.Context, beer Beer) error {
+func (b BeerRepositoryDb) Post(beer Beer) error {
 
-	b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Msgf(utils.InitStr)
+	b.log.Info().Str(utils.Method, utils.PostFunc).Msgf(utils.InitStr)
 
 	_, err := b.dbManager.DB().Exec(`insert into beer (id, name, brewery, country, price, currency) 
 		values ($1, $2, $3, $4, $5, $6);`,
@@ -79,22 +77,22 @@ func (b BeerRepositoryDb) Post(ctx context.Context, beer Beer) error {
 		if pqErr, isOk := err.(*pq.Error); isOk && pqErr.Code.Name() == utils.UniqueViolationSql {
 			return err2.ProductIdError
 		}
-		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Send()
+		b.log.Error().Err(err).Str(utils.Method, utils.PostFunc).Send()
 		return err
 	}
 
 	//id, _ := rows.LastInsertId() --> not support
-	b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Send()
+	b.log.Info().Str(utils.Method, utils.PostFunc).Send()
 	return nil
 }
 
-func (b BeerRepositoryDb) ById(ctx context.Context, id int64) (*BeerSql, error) {
-	b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Msgf(utils.InitStr)
+func (b BeerRepositoryDb) ById(id int64) (*BeerSql, error) {
+	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msgf(utils.InitStr)
 
 	var beer BeerSql
 
 	query := `SELECT id, name, brewery, country, price, currency FROM beer WHERE id = $1`
-	err := b.dbManager.DB().QueryRowContext(ctx, query, id).Scan(
+	err := b.dbManager.DB().QueryRow(query, id).Scan(
 		&beer.Id,
 		&beer.Name,
 		&beer.Brewery,
@@ -105,13 +103,13 @@ func (b BeerRepositoryDb) ById(ctx context.Context, id int64) (*BeerSql, error) 
 
 	switch {
 	case err == sql.ErrNoRows:
-		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		b.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return nil, err2.NotFoundError
 	case err != nil:
-		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		b.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return nil, err
 	default:
-		b.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		b.log.Info().Str(utils.Method, utils.ByIdFunc).Send()
 		return &beer, nil
 	}
 }

@@ -1,9 +1,7 @@
 package domain
 
 import (
-	"context"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -17,8 +15,8 @@ const (
 //go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerService
 type BeerService interface {
 	Get() ([]Beer, error)
-	Post(ctx context.Context, beerDto Beer) error
-	ById(ctx context.Context, id int64) (*Beer, error)
+	Post(beerDto Beer) error
+	ById(id int64) (*Beer, error)
 }
 
 type DefaultBeerService struct {
@@ -37,7 +35,7 @@ func NewBeersServiceImpl(beersRepository BeerRepository) BeerService {
 func (d DefaultBeerService) Get() ([]Beer, error) {
 	d.log.Info().Str(utils.Method, utils.GetFunc).Msg(utils.InitStr)
 
-	beersSql, err := d.beersRepository.Get(context.Background())
+	beersSql, err := d.beersRepository.Get()
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.GetFunc).Send()
 		return nil, err
@@ -58,39 +56,39 @@ func (d DefaultBeerService) Get() ([]Beer, error) {
 }
 
 // Post -
-func (d DefaultBeerService) Post(ctx context.Context, beer Beer) error {
-	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).
+func (d DefaultBeerService) Post(beer Beer) error {
+	d.log.Info().Str(utils.Method, utils.PostFunc).
 		Int64(productIdLog, beer.GetId()).
 		Str(productNameLog, beer.GetName()).
 		Float64(productPriceLog, beer.GetPrice()).
 		Msg(utils.InitStr)
 
-	err := d.beersRepository.Post(ctx, beer)
+	err := d.beersRepository.Post(beer)
 	if err != nil {
-		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Send()
+		d.log.Error().Err(err).Str(utils.Method, utils.PostFunc).Send()
 	} else {
-		d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).Msg(utils.EndStr)
+		d.log.Info().Str(utils.Method, utils.PostFunc).Msg(utils.EndStr)
 	}
 	return err
 }
 
-func (d DefaultBeerService) ById(ctx context.Context, id int64) (*Beer, error) {
-	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).
+func (d DefaultBeerService) ById(id int64) (*Beer, error) {
+	d.log.Info().Str(utils.Method, utils.ByIdFunc).
 		Int64(productIdLog, id).
 		Msg(utils.InitStr)
 
-	beerSql, err := d.beersRepository.ById(ctx, id)
+	beerSql, err := d.beersRepository.ById(id)
 	if err != nil {
-		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return nil, err
 	}
 
 	beer, err := beerSql.MapToDomain()
 	if err != nil {
-		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return nil, err
 	}
 
-	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
+	d.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
 	return &beer, err
 }
