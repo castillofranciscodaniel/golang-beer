@@ -75,7 +75,7 @@ func (b BeerRepositoryDb) Post(beer Beer) error {
 
 	if err != nil {
 		if pqErr, isOk := err.(*pq.Error); isOk && pqErr.Code.Name() == utils.UniqueViolationSql {
-			return err2.ProductIdError
+			return err2.DuplicatedIdError
 		}
 		b.log.Error().Err(err).Str(utils.Method, utils.PostFunc).Send()
 		return err

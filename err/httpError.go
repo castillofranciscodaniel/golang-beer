@@ -13,7 +13,7 @@ const (
 )
 
 var (
-	ProductIdError = &HttpError{
+	DuplicatedIdError = &HttpError{
 		Msg:  messageDuplicatedIdError,
 		Code: http.StatusConflict,
 	}
