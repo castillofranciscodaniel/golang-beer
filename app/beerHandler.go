@@ -28,7 +28,7 @@ func NewBeersHandler(beersService domain.BeerService) BeerHandler {
 func (b *BeerHandler) Get(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.GetFunc).Msg(utils.InitStr)
 
-	beersDomain, err := b.beersService.Get(r.Context())
+	beersDomain, err := b.beersService.Get()
 	if err != nil {
 		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.GetFunc).Send()
 		w.WriteHeader(http.StatusConflict)

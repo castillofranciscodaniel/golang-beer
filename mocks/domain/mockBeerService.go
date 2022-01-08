@@ -51,18 +51,18 @@ func (mr *MockBeerServiceMockRecorder) ById(arg0, arg1 interface{}) *gomock.Call
 }
 
 // Get mocks base method.
-func (m *MockBeerService) Get(arg0 context.Context) ([]domain.Beer, error) {
+func (m *MockBeerService) Get() ([]domain.Beer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0)
+	ret := m.ctrl.Call(m, "Get")
 	ret0, _ := ret[0].([]domain.Beer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockBeerServiceMockRecorder) Get(arg0 interface{}) *gomock.Call {
+func (mr *MockBeerServiceMockRecorder) Get() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockBeerService)(nil).Get), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockBeerService)(nil).Get))
 }
 
 // Post mocks base method.

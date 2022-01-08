@@ -15,7 +15,7 @@ func Start() {
 	container := InitializeServer()
 
 	routes.Use(middleware.AllowContentType("application/json", "multipart/form-data"))
-	routes.Use(middleware.RequestID)
+	//routes.Use(middleware.RequestID)
 	routes.Use(middleware.RealIP)
 	routes.Use(middleware.Logger)
 	routes.Use(middleware.Recoverer)

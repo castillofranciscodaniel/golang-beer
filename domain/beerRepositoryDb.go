@@ -49,7 +49,7 @@ func (b BeerRepositoryDb) Get(ctx context.Context) ([]BeerSql, error) {
 			&beer.Price,
 			&beer.Currency,
 		); err != nil {
-			log.Err(err).Send()
+			b.log.Error().Err(err).Send()
 			return nil, err
 		}
 
