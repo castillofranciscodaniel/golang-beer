@@ -56,15 +56,15 @@ func (b *BeerHandler) Get(w http.ResponseWriter, r *http.Request) {
 func (b *BeerHandler) Post(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.PostFunc).Msg(utils.InitStr)
 
-	var beerDto BeerRequest
+	var beerRequest BeerRequest
 
-	err := jsoniter.NewDecoder(r.Body).Decode(&beerDto)
+	err := jsoniter.NewDecoder(r.Body).Decode(&beerRequest)
 	if err != nil {
 		WriteErrorResponse(r.Context(), w, err)
 		return
 	}
 
-	beer, err := beerDto.MapToDomain()
+	beer, err := beerRequest.MapToDomain()
 	if err != nil {
 		b.log.Error().Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.PostFunc).Send()
 		WriteErrorResponse(r.Context(), w, err)
