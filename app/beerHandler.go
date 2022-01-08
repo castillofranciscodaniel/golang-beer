@@ -98,6 +98,13 @@ func (b *BeerHandler) ById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	beerRequest := BeerRequest{}
+	beerRequest.DomainToRequest(*beer)
+	if err != nil {
+		WriteErrorResponse(r.Context(), w, err)
+		return
+	}
+
 	b.log.Info().Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
-	WriteResponse(r.Context(), w, http.StatusOK, beer)
+	WriteResponse(r.Context(), w, http.StatusOK, beerRequest)
 }

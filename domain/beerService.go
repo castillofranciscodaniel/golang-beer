@@ -18,7 +18,7 @@ const (
 type BeerService interface {
 	Get(ctx context.Context) ([]Beer, error)
 	Post(ctx context.Context, beerDto Beer) error
-	ById(ctx context.Context, id int64) (*BeerSql, error)
+	ById(ctx context.Context, id int64) (*Beer, error)
 }
 
 type DefaultBeerService struct {
@@ -74,17 +74,23 @@ func (d DefaultBeerService) Post(ctx context.Context, beer Beer) error {
 	return err
 }
 
-func (d DefaultBeerService) ById(ctx context.Context, id int64) (*BeerSql, error) {
+func (d DefaultBeerService) ById(ctx context.Context, id int64) (*Beer, error) {
 	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).
 		Int64(productIdLog, id).
 		Msg(utils.InitStr)
 
-	beer, err := d.beersRepository.ById(ctx, id)
+	beerSql, err := d.beersRepository.ById(ctx, id)
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
-	} else {
-		d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
+		return nil, err
 	}
-	return beer, err
 
+	beer, err := beerSql.MapToDomain()
+	if err != nil {
+		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
+		return nil, err
+	}
+
+	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
+	return &beer, err
 }
