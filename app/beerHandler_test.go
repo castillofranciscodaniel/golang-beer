@@ -174,3 +174,21 @@ func Test_GetById_should_return_beers_with_code_status_ok(t *testing.T) {
 		t.Error("Failed while testing the status code")
 	}
 }
+
+func Test_GetById_should_return_beers_with_code_status_not_found(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+	mockService.EXPECT().GetById(int64(5)).Return(nil, err.NotFoundError)
+
+	router.Post("/beers/{beerId:[0-9]+}", beerHandler.GetById)
+
+	request, _ := http.NewRequest(http.MethodPost, "/beers/5", nil)
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, request)
+
+	// Assert
+	if recorder.Code != http.StatusNotFound {
+		t.Error("Failed while testing the status code")
+	}
+}
