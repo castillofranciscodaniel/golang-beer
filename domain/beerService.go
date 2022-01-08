@@ -16,7 +16,7 @@ const (
 
 //go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerService
 type BeerService interface {
-	Get(ctx context.Context) ([]Beer, error)
+	Get() ([]Beer, error)
 	Post(ctx context.Context, beerDto Beer) error
 	ById(ctx context.Context, id int64) (*Beer, error)
 }
@@ -34,25 +34,25 @@ func NewBeersServiceImpl(beersRepository BeerRepository) BeerService {
 }
 
 // Get -
-func (d DefaultBeerService) Get(ctx context.Context) ([]Beer, error) {
-	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Msg(utils.InitStr)
+func (d DefaultBeerService) Get() ([]Beer, error) {
+	d.log.Info().Str(utils.Method, utils.GetFunc).Msg(utils.InitStr)
 
-	beersSql, err := d.beersRepository.Get(ctx)
+	beersSql, err := d.beersRepository.Get(context.Background())
 	if err != nil {
-		d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Send()
+		d.log.Error().Err(err).Str(utils.Method, utils.GetFunc).Send()
 		return nil, err
 	}
 	beers := make([]Beer, 0, len(beersSql))
 	for _, beerSql := range beersSql {
 		beer, err := beerSql.MapToDomain()
 		if err != nil {
-			d.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Send()
+			d.log.Error().Err(err).Str(utils.Method, utils.GetFunc).Send()
 			return nil, err
 		}
 		beers = append(beers, beer)
 	}
 
-	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.GetFunc).Msg(utils.EndStr)
+	d.log.Info().Str(utils.Method, utils.GetFunc).Msg(utils.EndStr)
 	return beers, err
 
 }
