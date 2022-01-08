@@ -1,6 +1,8 @@
 package app
 
 import (
+	"github.com/castillofranciscodaniel/golang-beers/config"
+	domain2 "github.com/castillofranciscodaniel/golang-beers/pkg/domain"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
@@ -28,4 +30,14 @@ func Start() {
 	})
 
 	log.Error().Err(http.ListenAndServe(":3000", routes)).Send()
+}
+
+func InitializeServer() ContainerServiceImp {
+	healthHandler := NewHealthHandler()
+	dbManagerPostgres := config.NewDbManagerImpl()
+	beerRepositoryDb := domain2.NewBeersRepositoryDb(dbManagerPostgres)
+	beerService := domain2.NewBeersServiceImpl(beerRepositoryDb)
+	beerHandler := NewBeersHandler(beerService)
+	containerServiceImp := NewContainerServiceImp(healthHandler, beerHandler)
+	return containerServiceImp
 }
