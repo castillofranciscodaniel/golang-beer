@@ -77,6 +77,7 @@ func (b *BeerHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b.log.Info().Str(utils.Method, utils.PostFunc).Msg(utils.EndStr)
+
 	WriteResponse(r.Context(), w, http.StatusCreated, nil)
 }
 

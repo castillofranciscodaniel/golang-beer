@@ -35,6 +35,8 @@ func WriteInvalidRequest(w http.ResponseWriter) {
 
 func WriteResponse(ctx context.Context, w http.ResponseWriter, statusExpected int, i interface{}) {
 	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(statusExpected)
+
 	if i != nil {
 		if err := jsoniter.NewEncoder(w).Encode(i); err != nil {
 			log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.ByIdFunc).Send()
@@ -42,5 +44,4 @@ func WriteResponse(ctx context.Context, w http.ResponseWriter, statusExpected in
 			return
 		}
 	}
-	w.WriteHeader(statusExpected)
 }
