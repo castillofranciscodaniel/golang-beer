@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"database/sql"
-	"github.com/castillofranciscodaniel/golang-beers/utils"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

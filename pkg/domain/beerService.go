@@ -2,7 +2,7 @@ package domain
 
 import (
 	"context"
-	"github.com/castillofranciscodaniel/golang-beers/utils"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -14,7 +14,7 @@ const (
 	productPriceLog = "productPrice"
 )
 
-//go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beer/domain BeerService
+//go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/pkg/domain BeerService
 type BeerService interface {
 	Get(ctx context.Context) ([]BeerSql, error)
 	Post(ctx context.Context, beerDto Beer) error

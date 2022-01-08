@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/castillofranciscodaniel/golang-beers/domain"
-	"github.com/castillofranciscodaniel/golang-beers/utils"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/domain"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/json-iterator/go"

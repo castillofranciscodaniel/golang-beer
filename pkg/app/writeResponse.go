@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	err2 "github.com/castillofranciscodaniel/golang-beers/err"
-	"github.com/castillofranciscodaniel/golang-beers/utils"
+	err2 "github.com/castillofranciscodaniel/golang-beers/pkg/err"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/utils"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/json-iterator/go"
 	"github.com/rs/zerolog/log"

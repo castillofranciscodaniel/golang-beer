@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/castillofranciscodaniel/golang-beers/app"
+	"github.com/castillofranciscodaniel/golang-beers/pkg/app"
 )
 
 func main() {
