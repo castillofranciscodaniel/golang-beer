@@ -67,12 +67,12 @@ func (b BeerRepositoryDb) Post(ctx context.Context, beer Beer) error {
 
 	_, err := b.dbManager.DB().Exec(`insert into beer (id, name, brewery, country, price, currency) 
 		values ($1, $2, $3, $4, $5, $6);`,
-		sql.Named("ID", beer.getId()),
-		sql.Named("NAME", beer.getName()),
-		sql.Named("BREWERY", beer.getBrewery()),
-		sql.Named("COUNTRY", beer.getCountry()),
-		sql.Named("PRICE", beer.getPrice()),
-		sql.Named("CURRENCY", beer.getCurrency()),
+		sql.Named("ID", beer.GetId()),
+		sql.Named("NAME", beer.GetName()),
+		sql.Named("BREWERY", beer.GetBrewery()),
+		sql.Named("COUNTRY", beer.GetCountry()),
+		sql.Named("PRICE", beer.GetPrice()),
+		sql.Named("CURRENCY", beer.GetCurrency()),
 	)
 
 	if err != nil {

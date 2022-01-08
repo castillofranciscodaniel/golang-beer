@@ -16,3 +16,14 @@ type BeerRequest struct {
 func (b *BeerRequest) MapToDomain() (domain.Beer, error) {
 	return domain.NewBeer(b.Id, b.Name, b.Brewery, b.Country, b.Price, b.Currency)
 }
+
+func (b *BeerRequest) DomainToRequest(beer domain.Beer) BeerRequest {
+	return BeerRequest{
+		Id:       beer.GetId(),
+		Name:     beer.GetName(),
+		Brewery:  beer.GetBrewery(),
+		Country:  beer.GetCountry(),
+		Price:    beer.GetPrice(),
+		Currency: beer.GetCurrency(),
+	}
+}

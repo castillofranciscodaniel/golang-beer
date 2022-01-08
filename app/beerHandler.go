@@ -28,15 +28,21 @@ func NewBeersHandler(beersService domain.BeerService) BeerHandler {
 func (b *BeerHandler) Get(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.GetFunc).Msg(utils.InitStr)
 
-	beersResponse, err := b.beersService.Get(r.Context())
+	beersDomain, err := b.beersService.Get(r.Context())
 	if err != nil {
 		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.GetFunc).Send()
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
 
+	beerRequests := make([]BeerRequest, 0, len(beersDomain))
+	for _, beer := range beersDomain {
+		request := BeerRequest{}
+		beerRequests = append(beerRequests, request.DomainToRequest(beer))
+	}
+
 	w.Header().Add("Content-Type", "application/json")
-	if err := jsoniter.NewEncoder(w).Encode(beersResponse); err != nil {
+	if err := jsoniter.NewEncoder(w).Encode(beerRequests); err != nil {
 		b.log.Error().Err(err).Str(utils.Thread, middleware.GetReqID(r.Context())).Str(utils.Method, utils.GetFunc).Send()
 		w.WriteHeader(http.StatusConflict)
 		return

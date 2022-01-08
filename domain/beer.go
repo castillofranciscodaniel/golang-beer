@@ -34,27 +34,27 @@ func NewBeer(id int64, name string, brewery string, country string, price float6
 	}, nil
 }
 
-func (b *Beer) getId() int64 {
+func (b *Beer) GetId() int64 {
 	return b.id
 }
 
-func (b *Beer) getName() string {
+func (b *Beer) GetName() string {
 	return b.name
 }
 
-func (b *Beer) getCountry() string {
+func (b *Beer) GetCountry() string {
 	return b.country
 }
 
-func (b *Beer) getPrice() float64 {
+func (b *Beer) GetPrice() float64 {
 	return b.price
 }
 
-func (b *Beer) getCurrency() string {
+func (b *Beer) GetCurrency() string {
 	return b.currency
 }
 
-func (b *Beer) getBrewery() string {
+func (b *Beer) GetBrewery() string {
 	return b.brewery
 }
 

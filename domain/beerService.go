@@ -60,9 +60,9 @@ func (d DefaultBeerService) Get(ctx context.Context) ([]Beer, error) {
 // Post -
 func (d DefaultBeerService) Post(ctx context.Context, beer Beer) error {
 	d.log.Info().Str(utils.Thread, middleware.GetReqID(ctx)).Str(utils.Method, utils.PostFunc).
-		Int64(productIdLog, beer.getId()).
-		Str(productNameLog, beer.getName()).
-		Float64(productPriceLog, beer.getPrice()).
+		Int64(productIdLog, beer.GetId()).
+		Str(productNameLog, beer.GetName()).
+		Float64(productPriceLog, beer.GetPrice()).
 		Msg(utils.InitStr)
 
 	err := d.beersRepository.Post(ctx, beer)
