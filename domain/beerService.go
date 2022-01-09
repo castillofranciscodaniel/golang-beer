@@ -125,38 +125,29 @@ func (d DefaultBeerService) BoxPrice(id int64, toCurrency string, quantity int) 
 	if toCurrency == beer.currency { // same visa
 		changeTotal = beer.price
 	} else if fromCurrency == "USD" { // USD --> any visa
-		if priceVisa, isOK := currencies[fmt.Sprintf("%v%v", beer.GetCurrency(), toCurrency)]; isOK {
+		priceVisa, isOK := currencies[fmt.Sprintf("%v%v", beer.GetCurrency(), toCurrency)]
+		if isOK {
 			changeTotal = beer.price * priceVisa
-		} else {
-			return 0, err2.CurrencyNotAllowedError
 		}
+		return 0, err2.CurrencyNotAllowedError
 
 	} else if toCurrency == "USD" { // any visa --> USD
-		if priceVisa, isOK := currencies[fmt.Sprintf("%v%v", toCurrency, beer.GetCurrency())]; isOK {
-			changeTotal = beer.price / priceVisa
-		} else {
+		priceVisa, isOK := currencies[fmt.Sprintf("%v%v", toCurrency, beer.GetCurrency())]
+		if !isOK {
 			return 0, err2.CurrencyNotAllowedError
 		}
-	} else if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk { // any visa not usd --> any visa not usd
+		changeTotal = beer.price / priceVisa
+	} else { // any visa not usd --> any visa not usd
+		priceUsdToFrom, isOK := currencies[fmt.Sprintf("%v%v", "USD", beer.GetCurrency())]
+		priceUsdToFinish, isOK2 := currencies[fmt.Sprintf("%v%v", "USD", toCurrency)]
 
-		changeTotal = beer.price * visaPrice
-	} else {
-		var calculateUsdFromCurrency float64
-		if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
-			// usd to my currency
-			calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
+		if !isOK || !isOK2 {
+			return 0, err2.CurrencyNotAllowedError
 		}
-		if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
-			changeTotal = calculateUsdFromCurrency * visaPriceToCurrency
-		}
+		changeTotal = beer.price / priceUsdToFrom * priceUsdToFinish
 	}
 
 	totalPrice = changeTotal * float64(quantity)
 	d.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
 	return totalPrice, nil
-}
-
-func (d DefaultBeerService) getPrice(currencies map[string]float64, fromCurrency, toCurrency string) (float64, bool) {
-	price, isOK := currencies[fmt.Sprintf("%v/%v", fromCurrency, toCurrency)]
-	return price, isOK
 }

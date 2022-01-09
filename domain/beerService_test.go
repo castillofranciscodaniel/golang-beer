@@ -175,3 +175,32 @@ func Test_BoxPrice_any_visa_to_usd(t *testing.T) {
 	}
 
 }
+
+func Test_BoxPrice_any_visa_not_usd_to_any_visa_not_usd(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	quantity := 6
+
+	beer, _ := makeBeerClp()
+	beerSql := makeValidBeerSqlClp()
+	currency := makeCurrencies()
+	toCurrency := "ARS"
+
+	mockCurrencyClient.EXPECT().GetCurrencies().Return(currency.Quotes, nil)
+	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
+
+	price, err := beerService.BoxPrice(beer.GetId(), toCurrency, quantity)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	priceUsdToFrom := currency.Quotes[fmt.Sprintf("%v%v", "USD", beer.GetCurrency())]
+	priceUsdToFinish := currency.Quotes[fmt.Sprintf("%v%v", "USD", toCurrency)]
+
+	expectedPrice := float64(quantity) * beer.price / priceUsdToFrom * priceUsdToFinish
+	if price != expectedPrice {
+		t.Error("Failed distinct price total")
+	}
+
+}
