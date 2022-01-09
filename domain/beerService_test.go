@@ -82,6 +82,22 @@ func Test_Post_should_return_errors_if_the_id_exist(t *testing.T) {
 
 }
 
+func Test_Post_should_return_status_ok_when_beer_is_created(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	beer, _ := makeBeerUsd()
+
+	mockBeerRepository.EXPECT().Post(beer).Return(nil)
+
+	err := beerService.Post(beer)
+
+	if err != nil {
+		t.Error("the error should be: ", err.Error())
+	}
+
+}
+
 func Test_BoxPrice_same_visa(t *testing.T) {
 	tearDown := setUp(t)
 	defer tearDown()
