@@ -21,7 +21,7 @@ const (
 	getCurrenciesFunc = "GetCurrencies"
 )
 
-//go:generate mockgen -destination=./mockCurrencyClient.go -package=provider github.com/castillofranciscodaniel/golang-beers/provider CurrencyClient
+//go:generate mockgen -destination=./mockCurrencyClient.go -package=provider github.com/castillofranciscodaniel/golang-beers/infrastructure/provider CurrencyClient
 type CurrencyClient interface {
 	GetCurrencies() (map[string]float64, error)
 }
@@ -34,8 +34,7 @@ type CurrencyClientDefault struct {
 
 func NewCurrencyClientDefault() CurrencyClientDefault {
 	return CurrencyClientDefault{
-		log: log.With().Str(utils.Struct, "CurrencyClientDefault").Logger(),
-		//accessKey:   os.Getenv("KEY_CURRENCY_LAYER"),
+		log:              log.With().Str(utils.Struct, "CurrencyClientDefault").Logger(),
 		accessKey:        os.Getenv("KEY_CURRENCY_LAYER"),
 		currencyEndpoint: os.Getenv("CURRENCY_API"),
 	}
