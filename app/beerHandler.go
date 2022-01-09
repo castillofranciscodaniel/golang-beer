@@ -18,8 +18,8 @@ type BeerHandler struct {
 
 func NewBeersHandler(beersService domain.BeerService) BeerHandler {
 	return BeerHandler{
-		beersService: beersService,
 		log:          log.With().Str(utils.Struct, "BeerHandler").Logger(),
+		beersService: beersService,
 	}
 }
 
@@ -107,4 +107,37 @@ func (b *BeerHandler) GetById(w http.ResponseWriter, r *http.Request) {
 
 	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
 	WriteResponse(r.Context(), w, http.StatusOK, beerRequest)
+}
+
+func (b *BeerHandler) BoxPrice(w http.ResponseWriter, r *http.Request) {
+	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.InitStr)
+
+	idParam := chi.URLParam(r, "beerId")
+	toCurrency := r.URL.Query().Get("currency")
+	quantityString := r.URL.Query().Get("quantity")
+
+	quantity, err := strconv.Atoi(quantityString)
+	if err != nil {
+		// TODO errores de los query params
+		return
+	}
+
+	id, err := strconv.ParseInt(idParam, 0, 64)
+	if err != nil {
+		WriteInvalidRequest(w)
+		return
+	}
+
+	priceTotal, err := b.beersService.BoxPrice(id, toCurrency, quantity)
+	if err != nil {
+		WriteErrorResponse(r.Context(), w, err)
+		return
+	}
+
+	boxRequest := BeerBoxRequest{
+		PriceTotal: priceTotal,
+	}
+
+	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
+	WriteResponse(r.Context(), w, http.StatusOK, boxRequest)
 }

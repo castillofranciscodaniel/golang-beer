@@ -27,6 +27,7 @@ func Start() {
 		r.Get("/", container.BeerHandler.Get)
 		r.Post("/", container.BeerHandler.Post)
 		r.Get("/{beerId:[0-9]+}", container.BeerHandler.GetById)
+		r.Get("/{beerId:[0-9]+}/boxprice", container.BeerHandler.BoxPrice)
 	})
 
 	log.Error().Err(http.ListenAndServe(":8080", routes)).Send()
@@ -36,7 +37,8 @@ func InitializeServer() ContainerServiceImp {
 	healthHandler := NewHealthHandler()
 	dbManagerPostgres := provider.NewDbManagerImpl()
 	beerRepositoryDb := domain.NewBeersRepositoryDb(dbManagerPostgres)
-	beerService := domain.NewBeersServiceImpl(beerRepositoryDb)
+	currencyClientDefault := provider.NewCurrencyClientDefault()
+	beerService := domain.NewBeersServiceDefault(beerRepositoryDb, currencyClientDefault)
 	beerHandler := NewBeersHandler(beerService)
 	containerServiceImp := NewContainerServiceImp(healthHandler, beerHandler)
 	return containerServiceImp

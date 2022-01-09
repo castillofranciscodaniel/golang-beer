@@ -16,11 +16,11 @@ type Beer struct {
 
 func NewBeer(id int64, name string, brewery string, country string, price float64, currency string) (Beer, error) {
 	if id < 1 {
-		return Beer{}, err.IdCanNotBeMinorThanOne
+		return Beer{}, err.IdCanNotBeMinorThanOneError
 	}
 
 	if price < 0 {
-		return Beer{}, err.PriceCanNotBeMinorThanZero
+		return Beer{}, err.PriceCanNotBeMinorThanZeroError
 	}
 
 	return Beer{

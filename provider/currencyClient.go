@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"fmt"
+	err2 "github.com/castillofranciscodaniel/golang-beers/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/json-iterator/go"
 	"github.com/rs/zerolog"
@@ -11,31 +11,37 @@ import (
 )
 
 const (
-	url               = "https://api.currencylayer.com/convert?from=%V&to=%V&amount=%V"
-	convertAmountFunc = "ConvertAmount"
+	currencyEndpoint  = "https://api.currencylayer.com/live"
+	getCurrenciesFunc = "GetCurrencies"
 )
 
 type CurrencyClient interface {
-	ConvertAmount(fromCurrency, toCurrency string, amount float64) (float64, error)
+	GetCurrencies() (interface{}, error)
 }
 
 type CurrencyClientDefault struct {
-	log zerolog.Logger
+	log       zerolog.Logger
+	accessKey string
 }
 
 func NewCurrencyClientDefault() CurrencyClientDefault {
 	return CurrencyClientDefault{
 		log: log.With().Str(utils.Struct, "CurrencyClientDefault").Logger(),
+		//accessKey:   os.Getenv("KEY_CURRENCY_LAYER"),
+		accessKey: "3fbc64e43d0f0af2089938650bd3635b",
 	}
 }
 
-func (c CurrencyClientDefault) ConvertAmount(fromCurrency, toCurrency string, amount float64) (float64, error) {
-	c.log.Info().Str(utils.Method, convertAmountFunc).Msg(utils.InitStr)
+func (c CurrencyClientDefault) GetCurrencies() (interface{}, error) {
+	c.log.Info().Str(utils.Method, getCurrenciesFunc).Msg(utils.InitStr)
 
-	url := fmt.Sprint(url, fromCurrency, toCurrency, amount)
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, currencyEndpoint, nil)
 	req.Header.Set("Content-Type", "application/json")
+
+	query := req.URL.Query()
+	query.Add("access_key", c.accessKey)
+
+	req.URL.RawQuery = query.Encode()
 
 	client := &http.Client{
 		Timeout: time.Second * 60,
@@ -46,11 +52,15 @@ func (c CurrencyClientDefault) ConvertAmount(fromCurrency, toCurrency string, am
 		return 0, err
 	}
 
-	var mapita map[string]float64
-	err = jsoniter.NewDecoder(res.Body).Decode(&mapita)
+	var result map[string]interface{}
+	err = jsoniter.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
 		return 0, err
 	}
 
-	return mapita[""], nil
+	currencies, isOk := result["quotes"]
+	if isOk {
+		return currencies, nil
+	}
+	return nil, err2.ErrorTakingCurrencies
 }

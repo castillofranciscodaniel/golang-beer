@@ -13,6 +13,10 @@ type BeerRequest struct {
 	Currency string  `json:"Currency"`
 }
 
+type BeerBoxRequest struct {
+	PriceTotal float64 `json:"PriceTotal"`
+}
+
 func (b *BeerRequest) MapToDomain() (domain.Beer, error) {
 	return domain.NewBeer(b.Id, b.Name, b.Brewery, b.Country, b.Price, b.Currency)
 }

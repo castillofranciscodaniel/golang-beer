@@ -15,12 +15,16 @@ func InitializeServer() app.ContainerServiceImp {
 
 		wire.Bind(new(provider.DbManager), new(provider.DbManagerPostgres)),
 		wire.Bind(new(domain.BeerRepository), new(domain.BeerRepositoryDb)),
+		wire.Bind(new(provider.CurrencyClient), new(provider.CurrencyClientDefault)),
 
 		provider.NewDbManagerImpl,
 		app.NewHealthHandler,
 		domain.NewBeersRepositoryDb,
-		domain.NewBeersServiceImpl,
+		domain.NewBeersServiceDefault,
 		app.NewBeersHandler,
+
+		provider.NewCurrencyClientDefault,
+
 		app.NewContainerServiceImp,
 	)
 
