@@ -223,7 +223,7 @@ func Test_BoxPrice_any_visa_not_usd_to_any_visa_not_usd(t *testing.T) {
 
 }
 
-func Test_Get_should_return_a_list(t *testing.T) {
+func Test_Get_should_return_a_list_of_beer_domain(t *testing.T) {
 	tearDown := setUp(t)
 	defer tearDown()
 
@@ -259,6 +259,25 @@ func Test_Get_By_Id_should_return_not_found_error_if_not_exist(t *testing.T) {
 
 	if err != err2.NotFoundError {
 		t.Error("the error should be: ", err.Error())
+	}
+
+}
+
+func Test_Get_By_Id_should_return_beer_domain_when_exist(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	beerSql := makeValidBeerSqlUsd()
+	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
+
+	beer, err := beerService.GetById(beerSql.Id.Int64)
+
+	if err != nil {
+		t.Error("the error should be: ", err.Error())
+	}
+
+	if beer.id != beerSql.Id.Int64 {
+		t.Error("the id should be the same")
 	}
 
 }
