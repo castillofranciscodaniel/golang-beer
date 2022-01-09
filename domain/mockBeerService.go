@@ -7,7 +7,6 @@ package domain
 import (
 	reflect "reflect"
 
-	domain "github.com/castillofranciscodaniel/golang-beers/domain"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -34,11 +33,26 @@ func (m *MockBeerService) EXPECT() *MockBeerServiceMockRecorder {
 	return m.recorder
 }
 
+// BoxPrice mocks base method.
+func (m *MockBeerService) BoxPrice(arg0 int64, arg1 string, arg2 int) (float64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BoxPrice", arg0, arg1, arg2)
+	ret0, _ := ret[0].(float64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BoxPrice indicates an expected call of BoxPrice.
+func (mr *MockBeerServiceMockRecorder) BoxPrice(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BoxPrice", reflect.TypeOf((*MockBeerService)(nil).BoxPrice), arg0, arg1, arg2)
+}
+
 // Get mocks base method.
-func (m *MockBeerService) Get() ([]domain.Beer, error) {
+func (m *MockBeerService) Get() ([]Beer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
-	ret0, _ := ret[0].([]domain.Beer)
+	ret0, _ := ret[0].([]Beer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,10 +64,10 @@ func (mr *MockBeerServiceMockRecorder) Get() *gomock.Call {
 }
 
 // GetById mocks base method.
-func (m *MockBeerService) GetById(arg0 int64) (*domain.Beer, error) {
+func (m *MockBeerService) GetById(arg0 int64) (*Beer, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", arg0)
-	ret0, _ := ret[0].(*domain.Beer)
+	ret0, _ := ret[0].(*Beer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -65,7 +79,7 @@ func (mr *MockBeerServiceMockRecorder) GetById(arg0 interface{}) *gomock.Call {
 }
 
 // Post mocks base method.
-func (m *MockBeerService) Post(arg0 domain.Beer) error {
+func (m *MockBeerService) Post(arg0 Beer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Post", arg0)
 	ret0, _ := ret[0].(error)

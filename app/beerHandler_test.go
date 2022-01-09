@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
 	"github.com/castillofranciscodaniel/golang-beers/err"
-	mockDomain "github.com/castillofranciscodaniel/golang-beers/mocks/domain"
 	"github.com/go-chi/chi/v5"
 	"github.com/golang/mock/gomock"
 	jsoniter "github.com/json-iterator/go"
@@ -14,13 +13,13 @@ import (
 	"testing"
 )
 
-var mockService *mockDomain.MockBeerService
+var mockService *domain.MockBeerService
 var beerHandler BeerHandler
 var router *chi.Mux
 
 func setUp(t *testing.T) func() {
 	ctrl := gomock.NewController(t)
-	mockService = mockDomain.NewMockBeerService(ctrl)
+	mockService = domain.NewMockBeerService(ctrl)
 	beerHandler = BeerHandler{beersService: mockService}
 
 	router = chi.NewRouter()

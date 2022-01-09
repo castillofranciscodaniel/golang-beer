@@ -96,7 +96,7 @@ func (b *BeerSql) MapToDomain() (Beer, error) {
 	return NewBeer(id, name, brewery, country, price, currency)
 }
 
-//go:generate mockgen -destination=../mocks/domain/mockBeerRepository.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerRepository
+//go:generate mockgen -destination=./mockBeerRepository.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerRepository
 type BeerRepository interface {
 	Get() ([]BeerSql, error)
 	Post(beer Beer) error

@@ -15,7 +15,7 @@ const (
 	usd             = "USD"
 )
 
-//go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerService
+//go:generate mockgen -destination=./mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerService
 type BeerService interface {
 	Get() ([]Beer, error)
 	Post(beerDto Beer) error
@@ -105,39 +105,44 @@ func (d DefaultBeerService) BoxPrice(id int64, toCurrency string, quantity int) 
 		Int64(productIdLog, id).
 		Msg(utils.InitStr)
 
-	var priceTotal float64
+	var changeTotal, totalPrice float64
 
 	beer, err := d.GetById(id)
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
-		return priceTotal, err
+		return changeTotal, err
 	}
 
 	currencies, err := d.currencyClient.GetCurrencies()
-	fromCurrency := beer.GetCurrency()
-
-	if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
-		priceTotal = beer.price * visaPrice
-	} else {
-		var calculateUsdFromCurrency float64
-		if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
-			// usd to my currency
-			calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
-		}
-		if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
-			priceTotal = calculateUsdFromCurrency * visaPriceToCurrency * float64(quantity)
-		}
-	}
-
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
-		return priceTotal, err
+		return totalPrice, err
 	}
+
+	if toCurrency == beer.currency {
+		changeTotal = beer.price
+	} else {
+
+		fromCurrency := beer.GetCurrency()
+		if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
+			changeTotal = beer.price * visaPrice
+		} else {
+			var calculateUsdFromCurrency float64
+			if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
+				// usd to my currency
+				calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
+			}
+			if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
+				changeTotal = calculateUsdFromCurrency * visaPriceToCurrency
+			}
+		}
+	}
+	totalPrice = changeTotal * float64(quantity)
 	d.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
-	return priceTotal, nil
+	return totalPrice, nil
 }
 
 func (d DefaultBeerService) getPrice(currencies map[string]float64, fromCurrency, toCurrency string) (float64, bool) {
-	price, isOK := currencies[fmt.Sprint("%v/%v", fromCurrency, toCurrency)]
+	price, isOK := currencies[fmt.Sprintf("%v/%v", fromCurrency, toCurrency)]
 	return price, isOK
 }

@@ -7,7 +7,6 @@ package domain
 import (
 	reflect "reflect"
 
-	domain "github.com/castillofranciscodaniel/golang-beers/domain"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,10 +34,10 @@ func (m *MockBeerRepository) EXPECT() *MockBeerRepositoryMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockBeerRepository) Get() ([]domain.BeerSql, error) {
+func (m *MockBeerRepository) Get() ([]BeerSql, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get")
-	ret0, _ := ret[0].([]domain.BeerSql)
+	ret0, _ := ret[0].([]BeerSql)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -50,10 +49,10 @@ func (mr *MockBeerRepositoryMockRecorder) Get() *gomock.Call {
 }
 
 // GetById mocks base method.
-func (m *MockBeerRepository) GetById(arg0 int64) (*domain.BeerSql, error) {
+func (m *MockBeerRepository) GetById(arg0 int64) (*BeerSql, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetById", arg0)
-	ret0, _ := ret[0].(*domain.BeerSql)
+	ret0, _ := ret[0].(*BeerSql)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -65,7 +64,7 @@ func (mr *MockBeerRepositoryMockRecorder) GetById(arg0 interface{}) *gomock.Call
 }
 
 // Post mocks base method.
-func (m *MockBeerRepository) Post(arg0 domain.Beer) error {
+func (m *MockBeerRepository) Post(arg0 Beer) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Post", arg0)
 	ret0, _ := ret[0].(error)

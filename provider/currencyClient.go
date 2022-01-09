@@ -1,12 +1,14 @@
 package provider
 
 import (
+	"fmt"
 	err2 "github.com/castillofranciscodaniel/golang-beers/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/json-iterator/go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -16,31 +18,33 @@ type Currencies struct {
 }
 
 const (
-	currencyEndpoint  = "http://api.currencylayer.com/live"
 	getCurrenciesFunc = "GetCurrencies"
 )
 
+//go:generate mockgen -destination=./mockCurrencyClient.go -package=provider github.com/castillofranciscodaniel/golang-beers/provider CurrencyClient
 type CurrencyClient interface {
 	GetCurrencies() (map[string]float64, error)
 }
 
 type CurrencyClientDefault struct {
-	log       zerolog.Logger
-	accessKey string
+	log              zerolog.Logger
+	accessKey        string
+	currencyEndpoint string
 }
 
 func NewCurrencyClientDefault() CurrencyClientDefault {
 	return CurrencyClientDefault{
 		log: log.With().Str(utils.Struct, "CurrencyClientDefault").Logger(),
 		//accessKey:   os.Getenv("KEY_CURRENCY_LAYER"),
-		accessKey: "3fbc64e43d0f0af2089938650bd3635b",
+		accessKey:        os.Getenv("KEY_CURRENCY_LAYER"),
+		currencyEndpoint: os.Getenv("CURRENCY_API"),
 	}
 }
 
 func (c CurrencyClientDefault) GetCurrencies() (map[string]float64, error) {
 	c.log.Info().Str(utils.Method, getCurrenciesFunc).Msg(utils.InitStr)
 
-	req, err := http.NewRequest(http.MethodGet, currencyEndpoint, nil)
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%v/%v", c.currencyEndpoint, "live"), nil)
 	req.Header.Set("Content-Type", "application/json")
 
 	query := req.URL.Query()
