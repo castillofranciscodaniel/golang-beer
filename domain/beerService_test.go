@@ -248,3 +248,17 @@ func Test_Get_should_return_a_list(t *testing.T) {
 		t.Error("the id should be the same")
 	}
 }
+
+func Test_Get_By_Id_should_return_not_found_error_if_not_exist(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	mockBeerRepository.EXPECT().Get().Return(nil, err2.NotFoundError)
+
+	_, err := beerService.Get()
+
+	if err != err2.NotFoundError {
+		t.Error("the error should be: ", err.Error())
+	}
+
+}
