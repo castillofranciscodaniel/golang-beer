@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/castillofranciscodaniel/golang-beers/app"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/persistence"
 	provider2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 )
 
@@ -16,7 +17,7 @@ import (
 
 func InitializeServer() app.ContainerServiceImp {
 	healthHandler := app.NewHealthHandler()
-	dbManagerPostgres := provider2.NewDbManagerImpl()
+	dbManagerPostgres := persistence.NewDbManagerImpl()
 	beerRepositoryDb := domain.NewBeersRepositoryDb(dbManagerPostgres)
 	currencyClientDefault := provider2.NewCurrencyClientDefault()
 	beerService := domain.NewBeersServiceDefault(beerRepositoryDb, currencyClientDefault)
