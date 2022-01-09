@@ -119,9 +119,15 @@ func (b *BeerHandler) BoxPrice(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "beerId")
 	if idParam == "" {
 		WriteErrorResponse(r.Context(), w, err.IdParamCanNotBeEmptyError)
+		return
 	}
 
 	toCurrency := r.URL.Query().Get("currency")
+	if toCurrency == "" {
+		WriteErrorResponse(r.Context(), w, err.ToCurrencyCanNotBeEmptyError)
+		return
+	}
+
 	quantityString := r.URL.Query().Get("quantity")
 	if quantityString == "" {
 		quantityString = "6"
@@ -129,7 +135,7 @@ func (b *BeerHandler) BoxPrice(w http.ResponseWriter, r *http.Request) {
 
 	quantity, err := strconv.Atoi(quantityString)
 	if err != nil {
-		// TODO errores de los query params
+		WriteErrorResponse(r.Context(), w, err)
 		return
 	}
 

@@ -32,6 +32,11 @@ var (
 		Msg:  "id param can not be empty",
 		Code: http.StatusBadRequest,
 	}
+
+	ToCurrencyCanNotBeEmptyError = &HttpError{
+		Msg:  "to currency can not be empty",
+		Code: http.StatusBadRequest,
+	}
 )
 
 type HttpError struct {

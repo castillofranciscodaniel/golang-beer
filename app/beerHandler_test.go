@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
 	"github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/go-chi/chi/v5"
@@ -217,28 +218,43 @@ func Test_GetById_should_return_beers_with_code_status_bad_request(t *testing.T)
 	}
 }
 
-func Test_BoxPrice_should_return_beers_with_code_status_ok(t *testing.T) {
+func Test_BoxPrice_should_return_err_if_not_send_param_id(t *testing.T) {
 
 	tearDown := setUp(t)
 	defer tearDown()
 
-	beer1, _ := makeBeerUsd()
-	beer2, _ := makeBeerClp()
-	dummyBeers := []domain.Beer{
-		beer1,
-		beer2,
-	}
+	router.Get("/beers/{beer}/boxprice", beerHandler.BoxPrice)
 
-	mockService.EXPECT().Get().Return(dummyBeers, nil)
-	router.Get("/beers", beerHandler.BoxPrice)
-
-	request, _ := http.NewRequest(http.MethodGet, "/{beerId:[0-9]+}/boxprice", nil)
+	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", ""), nil)
 
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
 
 	// Assert
-	if recorder.Code != http.StatusOK {
+	if recorder.Code != http.StatusBadRequest {
 		t.Error("Failed while testing the status code")
 	}
 }
+
+//func Test(t *testing.T) {
+//
+//	tearDown := setUp(t)
+//	defer tearDown()
+//
+//	beer, _ := makeBeerUsd()
+//
+//	mockService.EXPECT().GetById(beer.GetId()).Return(&beer, nil)
+//	mockService.EXPECT().BoxPrice(beer.GetId(), "CLP", 6).Return(float64(740), nil)
+//
+//	router.Get("/beers/{beerId:[0-9]+}/boxprice", beerHandler.BoxPrice)
+//
+//	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", beer.GetId()), nil)
+//
+//	recorder := httptest.NewRecorder()
+//	router.ServeHTTP(recorder, request)
+//
+//	// Assert
+//	if recorder.Code != http.StatusOK {
+//		t.Error("Failed while testing the status code")
+//	}
+//}
