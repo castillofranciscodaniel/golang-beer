@@ -29,7 +29,7 @@ func Start() {
 		r.Get("/{beerId:[0-9]+}", container.BeerHandler.GetById)
 	})
 
-	log.Error().Err(http.ListenAndServe(":3000", routes)).Send()
+	log.Error().Err(http.ListenAndServe(":8080", routes)).Send()
 }
 
 func InitializeServer() ContainerServiceImp {
