@@ -2,8 +2,8 @@ package domain
 
 import (
 	"database/sql"
-	"github.com/castillofranciscodaniel/golang-beers/config"
 	err2 "github.com/castillofranciscodaniel/golang-beers/err"
+	"github.com/castillofranciscodaniel/golang-beers/provider"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/lib/pq"
 	"github.com/rs/zerolog"
@@ -12,10 +12,10 @@ import (
 
 type BeerRepositoryDb struct {
 	log       zerolog.Logger
-	dbManager config.DbManager
+	dbManager provider.DbManager
 }
 
-func NewBeersRepositoryDb(dbManager config.DbManager) BeerRepositoryDb {
+func NewBeersRepositoryDb(dbManager provider.DbManager) BeerRepositoryDb {
 	return BeerRepositoryDb{
 		dbManager: dbManager,
 		log:       log.With().Str(utils.Struct, "BeerRepositoryDb").Logger(),

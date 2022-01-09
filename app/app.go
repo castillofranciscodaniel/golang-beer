@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/castillofranciscodaniel/golang-beers/config"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
+	"github.com/castillofranciscodaniel/golang-beers/provider"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
@@ -15,10 +15,10 @@ func Start() {
 	container := InitializeServer()
 
 	routes.Use(middleware.AllowContentType("application/json", "multipart/form-data"))
-	//routes.Use(middleware.RequestID)
 	routes.Use(middleware.RealIP)
 	routes.Use(middleware.Logger)
 	routes.Use(middleware.Recoverer)
+
 	routes.Mount("/debug", middleware.Profiler())
 
 	routes.Get("/health", container.HealthHandler.Health)
@@ -34,7 +34,7 @@ func Start() {
 
 func InitializeServer() ContainerServiceImp {
 	healthHandler := NewHealthHandler()
-	dbManagerPostgres := config.NewDbManagerImpl()
+	dbManagerPostgres := provider.NewDbManagerImpl()
 	beerRepositoryDb := domain.NewBeersRepositoryDb(dbManagerPostgres)
 	beerService := domain.NewBeersServiceImpl(beerRepositoryDb)
 	beerHandler := NewBeersHandler(beerService)
