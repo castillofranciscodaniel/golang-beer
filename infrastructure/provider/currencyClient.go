@@ -2,7 +2,7 @@ package provider
 
 import (
 	"fmt"
-	err2 "github.com/castillofranciscodaniel/golang-beers/err"
+	err2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/json-iterator/go"
 	"github.com/rs/zerolog"

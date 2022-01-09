@@ -2,7 +2,7 @@ package domain
 
 import (
 	"database/sql"
-	"github.com/castillofranciscodaniel/golang-beers/err"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 )
 
 type Beer struct {

@@ -2,8 +2,8 @@ package domain
 
 import (
 	"database/sql"
-	err2 "github.com/castillofranciscodaniel/golang-beers/err"
-	"github.com/castillofranciscodaniel/golang-beers/provider"
+	err2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/lib/pq"
 	"github.com/rs/zerolog"

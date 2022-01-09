@@ -2,7 +2,7 @@ package domain
 
 import (
 	"fmt"
-	"github.com/castillofranciscodaniel/golang-beers/provider"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

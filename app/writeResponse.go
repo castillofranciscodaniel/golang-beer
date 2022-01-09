@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	err2 "github.com/castillofranciscodaniel/golang-beers/err"
+	err2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/json-iterator/go"

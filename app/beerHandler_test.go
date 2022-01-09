@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
-	"github.com/castillofranciscodaniel/golang-beers/err"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/go-chi/chi/v5"
 	"github.com/golang/mock/gomock"
 	jsoniter "github.com/json-iterator/go"

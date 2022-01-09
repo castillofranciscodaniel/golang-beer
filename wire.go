@@ -6,24 +6,24 @@ package main
 import (
 	"github.com/castillofranciscodaniel/golang-beers/app"
 	"github.com/castillofranciscodaniel/golang-beers/domain"
-	"github.com/castillofranciscodaniel/golang-beers/provider"
+	provider2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/google/wire"
 )
 
 func InitializeServer() app.ContainerServiceImp {
 	wire.Build(
 
-		wire.Bind(new(provider.DbManager), new(provider.DbManagerPostgres)),
+		wire.Bind(new(provider2.DbManager), new(provider2.DbManagerPostgres)),
 		wire.Bind(new(domain.BeerRepository), new(domain.BeerRepositoryDb)),
-		wire.Bind(new(provider.CurrencyClient), new(provider.CurrencyClientDefault)),
+		wire.Bind(new(provider2.CurrencyClient), new(provider2.CurrencyClientDefault)),
 
-		provider.NewDbManagerImpl,
+		provider2.NewDbManagerImpl,
 		app.NewHealthHandler,
 		domain.NewBeersRepositoryDb,
 		domain.NewBeersServiceDefault,
 		app.NewBeersHandler,
 
-		provider.NewCurrencyClientDefault,
+		provider2.NewCurrencyClientDefault,
 
 		app.NewContainerServiceImp,
 	)
