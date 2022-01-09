@@ -8,4 +8,6 @@ var (
 	PriceCanNotBeMinorThanZeroError = errors.New("price can not be minor than zero")
 
 	ErrorTakingCurrencies = errors.New("error taking currencies")
+
+	CurrencyNotAllowedError = errors.New("currency not allowed")
 )

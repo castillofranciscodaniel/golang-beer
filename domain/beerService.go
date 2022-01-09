@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	err2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/rs/zerolog"
@@ -119,24 +120,31 @@ func (d DefaultBeerService) BoxPrice(id int64, toCurrency string, quantity int) 
 		return totalPrice, err
 	}
 
+	fromCurrency := beer.GetCurrency()
+
 	if toCurrency == beer.currency {
 		changeTotal = beer.price
-	} else {
-
-		fromCurrency := beer.GetCurrency()
-		if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
-			changeTotal = beer.price * visaPrice
+	} else if fromCurrency == "USD" {
+		if priceVisa, isOK := currencies[fmt.Sprintf("%v%v", beer.GetCurrency(), toCurrency)]; isOK {
+			changeTotal = beer.price * priceVisa
 		} else {
-			var calculateUsdFromCurrency float64
-			if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
-				// usd to my currency
-				calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
-			}
-			if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
-				changeTotal = calculateUsdFromCurrency * visaPriceToCurrency
-			}
+			return 0, err2.CurrencyNotAllowedError
+		}
+
+	} else if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
+
+		changeTotal = beer.price * visaPrice
+	} else {
+		var calculateUsdFromCurrency float64
+		if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
+			// usd to my currency
+			calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
+		}
+		if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
+			changeTotal = calculateUsdFromCurrency * visaPriceToCurrency
 		}
 	}
+
 	totalPrice = changeTotal * float64(quantity)
 	d.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
 	return totalPrice, nil

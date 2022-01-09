@@ -3,6 +3,7 @@ package domain
 import (
 	"database/sql"
 	"fmt"
+	err2 "github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/golang/mock/gomock"
 	"testing"
@@ -22,6 +23,32 @@ func setUp(t *testing.T) func() {
 	return func() {
 		defer ctrl.Finish()
 	}
+}
+
+func makeBeer() (Beer, error) {
+	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
+}
+
+func makeValidBeerSql() BeerSql {
+	return BeerSql{
+		Id:       sql.NullInt64{Int64: 2, Valid: true},
+		Name:     sql.NullString{String: "Patagonia", Valid: true},
+		Brewery:  sql.NullString{String: "Norte", Valid: true},
+		Country:  sql.NullString{String: "Chile", Valid: true},
+		Price:    sql.NullFloat64{Float64: 740, Valid: true},
+		Currency: sql.NullString{String: "USD", Valid: true},
+	}
+}
+
+func makeCurrencies() provider.Currencies {
+	return provider.Currencies{
+		Success: true,
+		Quotes: map[string]float64{
+			"USDCLP": 10,
+			"USDARS": 50,
+		},
+	}
+
 }
 
 //func Test_Post_should_return_errors_if_the_new_beer_can_not_be_created(t *testing.T) {
@@ -87,28 +114,23 @@ func Test_BoxPrice_usd_to_another_visa(t *testing.T) {
 
 }
 
-func makeBeer() (Beer, error) {
-	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
-}
+func Test_BoxPrice_currency_not_allowed(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
 
-func makeValidBeerSql() BeerSql {
-	return BeerSql{
-		Id:       sql.NullInt64{Int64: 2, Valid: true},
-		Name:     sql.NullString{String: "Patagonia", Valid: true},
-		Brewery:  sql.NullString{String: "Norte", Valid: true},
-		Country:  sql.NullString{String: "Chile", Valid: true},
-		Price:    sql.NullFloat64{Float64: 740, Valid: true},
-		Currency: sql.NullString{String: "USD", Valid: true},
-	}
-}
+	quantity := 6
 
-func makeCurrencies() provider.Currencies {
-	return provider.Currencies{
-		Success: true,
-		Quotes: map[string]float64{
-			"USDCLP": 10,
-			"USDARS": 50,
-		},
+	beer, _ := makeBeer()
+	beerSql := makeValidBeerSql()
+	currency := makeCurrencies()
+	toCurrency := ""
+
+	mockCurrencyClient.EXPECT().GetCurrencies().Return(currency.Quotes, nil)
+	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
+
+	_, err := beerService.BoxPrice(beer.GetId(), toCurrency, quantity)
+	if err != err2.CurrencyNotAllowedError {
+		t.Error("unexpected error: ", err.Error())
 	}
 
 }
