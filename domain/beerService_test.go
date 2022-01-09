@@ -2,6 +2,7 @@ package domain
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/castillofranciscodaniel/golang-beers/infrastructure/provider"
 	"github.com/golang/mock/gomock"
 	"testing"
@@ -43,15 +44,8 @@ func Test_BoxPrice_same_visa(t *testing.T) {
 
 	quantity := 6
 
-	beer, _ := NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
-	beerSql := BeerSql{
-		Id:       sql.NullInt64{Int64: 2, Valid: true},
-		Name:     sql.NullString{String: "Patagonia", Valid: true},
-		Brewery:  sql.NullString{String: "Norte", Valid: true},
-		Country:  sql.NullString{String: "Chile", Valid: true},
-		Price:    sql.NullFloat64{Float64: 740, Valid: true},
-		Currency: sql.NullString{String: "USD", Valid: true},
-	}
+	beer, _ := makeBeer()
+	beerSql := makeValidBeerSql()
 
 	mockCurrencyClient.EXPECT().GetCurrencies().Return(nil, nil)
 	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
@@ -63,6 +57,58 @@ func Test_BoxPrice_same_visa(t *testing.T) {
 
 	if price != float64(quantity)*beer.price {
 		t.Error("Failed distinct price total")
+	}
+
+}
+
+func Test_BoxPrice_usd_to_another_visa(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	quantity := 6
+
+	beer, _ := makeBeer()
+	beerSql := makeValidBeerSql()
+	currency := makeCurrencies()
+	toCurrency := "CLP"
+
+	mockCurrencyClient.EXPECT().GetCurrencies().Return(currency.Quotes, nil)
+	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
+
+	price, err := beerService.BoxPrice(beer.GetId(), toCurrency, quantity)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	expectedPrice := float64(quantity) * beer.price * currency.Quotes[fmt.Sprintf("%v%v", beer.GetCurrency(), toCurrency)]
+	if price != expectedPrice {
+		t.Error("Failed distinct price total")
+	}
+
+}
+
+func makeBeer() (Beer, error) {
+	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
+}
+
+func makeValidBeerSql() BeerSql {
+	return BeerSql{
+		Id:       sql.NullInt64{Int64: 2, Valid: true},
+		Name:     sql.NullString{String: "Patagonia", Valid: true},
+		Brewery:  sql.NullString{String: "Norte", Valid: true},
+		Country:  sql.NullString{String: "Chile", Valid: true},
+		Price:    sql.NullFloat64{Float64: 740, Valid: true},
+		Currency: sql.NullString{String: "USD", Valid: true},
+	}
+}
+
+func makeCurrencies() provider.Currencies {
+	return provider.Currencies{
+		Success: true,
+		Quotes: map[string]float64{
+			"USDCLP": 10,
+			"USDARS": 50,
+		},
 	}
 
 }
