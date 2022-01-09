@@ -1,8 +1,8 @@
 package domain
 
 import (
+	"database/sql"
 	"github.com/castillofranciscodaniel/golang-beers/err"
-	"gopkg.in/guregu/null.v4"
 )
 
 type Beer struct {
@@ -58,12 +58,12 @@ func (b *Beer) GetBrewery() string {
 }
 
 type BeerSql struct {
-	Id       null.Int
-	Name     null.String
-	Brewery  null.String
-	Country  null.String
-	Price    null.Float
-	Currency null.String
+	Id       sql.NullInt64
+	Name     sql.NullString
+	Brewery  sql.NullString
+	Country  sql.NullString
+	Price    sql.NullFloat64
+	Currency sql.NullString
 }
 
 func (b *BeerSql) MapToDomain() (Beer, error) {

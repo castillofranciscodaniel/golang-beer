@@ -9,7 +9,6 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/lib/pq v1.10.4
 	github.com/rs/zerolog v1.26.1
-	gopkg.in/guregu/null.v4 v4.0.0
 )
 
 require (
