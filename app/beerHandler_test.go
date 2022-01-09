@@ -258,6 +258,29 @@ func Test_BoxPrice_should_return_err_if_not_send_query_param_currency(t *testing
 	}
 }
 
+func Test_BoxPrice_should_return_err_if_query_param_quantity_is_not_a_number(t *testing.T) {
+
+	tearDown := setUp(t)
+	defer tearDown()
+
+	router.Get("/beers/{beer}/boxprice", beerHandler.BoxPrice)
+
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", 2), nil)
+
+	query := req.URL.Query()
+	query.Add("quantity", "a")
+
+	req.URL.RawQuery = query.Encode()
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
+
+	// Assert
+	if recorder.Code != http.StatusBadRequest {
+		t.Error("Failed while testing the status code")
+	}
+}
+
 //func Test(t *testing.T) {
 //
 //	tearDown := setUp(t)
