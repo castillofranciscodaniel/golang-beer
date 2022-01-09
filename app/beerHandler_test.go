@@ -78,7 +78,6 @@ func Test_Get_should_return_beers_with_code_status_ok(t *testing.T) {
 func Test_Get_should_return_beers_with_code_status_conflict(t *testing.T) {
 	tearDown := setUp(t)
 	defer tearDown()
-
 	mockService.EXPECT().Get().Return(nil, errors.New("any error"))
 
 	router.Get("/beers", beerHandler.Get)
@@ -229,6 +228,29 @@ func Test_BoxPrice_should_return_err_if_not_send_param_id(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, request)
+
+	// Assert
+	if recorder.Code != http.StatusBadRequest {
+		t.Error("Failed while testing the status code")
+	}
+}
+
+func Test_BoxPrice_should_return_err_if_not_send_query_param_currency(t *testing.T) {
+
+	tearDown := setUp(t)
+	defer tearDown()
+
+	router.Get("/beers/{beer}/boxprice", beerHandler.BoxPrice)
+
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", 2), nil)
+
+	query := req.URL.Query()
+	query.Add("currency", "")
+
+	req.URL.RawQuery = query.Encode()
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
 
 	// Assert
 	if recorder.Code != http.StatusBadRequest {
