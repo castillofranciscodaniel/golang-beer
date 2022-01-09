@@ -82,7 +82,7 @@ func Test_Post_should_return_errors_if_the_id_exist(t *testing.T) {
 
 }
 
-func Test_Post_should_return_status_ok_when_beer_is_created(t *testing.T) {
+func Test_Post_should_return_any_error_when_beer_is_created(t *testing.T) {
 	tearDown := setUp(t)
 	defer tearDown()
 
@@ -221,4 +221,30 @@ func Test_BoxPrice_any_visa_not_usd_to_any_visa_not_usd(t *testing.T) {
 		t.Error("Failed distinct price total")
 	}
 
+}
+
+func Test_Get_should_return_a_list(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	dummyBeersSql := []BeerSql{
+		makeValidBeerSqlClp(),
+		makeValidBeerSqlUsd(),
+	}
+
+	mockBeerRepository.EXPECT().Get().Return(dummyBeersSql, nil)
+
+	beers, err := beerService.Get()
+
+	if err != nil {
+		t.Error("the error should be: ", err.Error())
+	}
+
+	if beers[0].id != dummyBeersSql[0].Id.Int64 {
+		t.Error("the id should be the same")
+	}
+
+	if beers[1].id != dummyBeersSql[1].Id.Int64 {
+		t.Error("the id should be the same")
+	}
 }
