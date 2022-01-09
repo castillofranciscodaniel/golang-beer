@@ -36,11 +36,12 @@ func (i *DbManagerPostgres) config() {
 	query := url.Values{}
 	//query.Add("app name", "ms-payment-neg")
 	query.Add("database", "test")
+	query.Add("sslmode", "disable")
 
 	u := &url.URL{
 		Scheme: "postgresql",
 		User:   url.UserPassword("postgres", "postgres"),
-		Host:   "localhost:5432",
+		Host:   "database:5432",
 		// Path:  instance, // if connecting to an instance instead of a app
 		RawQuery: query.Encode(),
 	}
