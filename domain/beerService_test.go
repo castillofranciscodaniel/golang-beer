@@ -29,6 +29,10 @@ func makeBeerUsd() (Beer, error) {
 	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
 }
 
+func makeBeerClp() (Beer, error) {
+	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "CLP")
+}
+
 func makeValidBeerSqlClp() BeerSql {
 	return BeerSql{
 		Id:       sql.NullInt64{Int64: 2, Valid: true},
@@ -38,10 +42,6 @@ func makeValidBeerSqlClp() BeerSql {
 		Price:    sql.NullFloat64{Float64: 740, Valid: true},
 		Currency: sql.NullString{String: "CLP", Valid: true},
 	}
-}
-
-func makeBeerClp() (Beer, error) {
-	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "CLP")
 }
 
 func makeValidBeerSqlUsd() BeerSql {

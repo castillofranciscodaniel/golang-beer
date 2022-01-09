@@ -27,8 +27,7 @@ type BeerService interface {
 type DefaultBeerService struct {
 	log             zerolog.Logger
 	beersRepository BeerRepository
-
-	currencyClient provider.CurrencyClient
+	currencyClient  provider.CurrencyClient
 }
 
 func NewBeersServiceDefault(beersRepository BeerRepository, currencyClient provider.CurrencyClient) BeerService {

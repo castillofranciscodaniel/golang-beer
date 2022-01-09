@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/castillofranciscodaniel/golang-beers/domain"
+	"github.com/castillofranciscodaniel/golang-beers/infrastructure/err"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/json-iterator/go"
@@ -85,6 +86,9 @@ func (b *BeerHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.InitStr)
 
 	idParam := chi.URLParam(r, "beerId")
+	if idParam == "" {
+		WriteErrorResponse(r.Context(), w, err.IdParamCanNotBeEmptyError)
+	}
 
 	id, err := strconv.ParseInt(idParam, 0, 64)
 	if err != nil {
@@ -113,8 +117,15 @@ func (b *BeerHandler) BoxPrice(w http.ResponseWriter, r *http.Request) {
 	b.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.InitStr)
 
 	idParam := chi.URLParam(r, "beerId")
+	if idParam == "" {
+		WriteErrorResponse(r.Context(), w, err.IdParamCanNotBeEmptyError)
+	}
+
 	toCurrency := r.URL.Query().Get("currency")
 	quantityString := r.URL.Query().Get("quantity")
+	if quantityString == "" {
+		quantityString = "6"
+	}
 
 	quantity, err := strconv.Atoi(quantityString)
 	if err != nil {

@@ -27,6 +27,11 @@ var (
 		Msg:  notFound,
 		Code: http.StatusNotFound,
 	}
+
+	IdParamCanNotBeEmptyError = &HttpError{
+		Msg:  "id param can not be empty",
+		Code: http.StatusBadRequest,
+	}
 )
 
 type HttpError struct {
