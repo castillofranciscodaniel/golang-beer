@@ -41,7 +41,7 @@ func (i *DbManagerPostgres) config() {
 	u := &url.URL{
 		Scheme: "postgresql",
 		User:   url.UserPassword("postgres", "postgres"),
-		Host:   "localhost:5432",
+		Host:   "database:5432",
 		// Path:  instance, // if connecting to an instance instead of a app
 		RawQuery: query.Encode(),
 	}
