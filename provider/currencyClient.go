@@ -10,13 +10,18 @@ import (
 	"time"
 )
 
+type Currencies struct {
+	Success bool               `json:"success"`
+	Quotes  map[string]float64 `json:"Quotes"`
+}
+
 const (
-	currencyEndpoint  = "https://api.currencylayer.com/live"
+	currencyEndpoint  = "http://api.currencylayer.com/live"
 	getCurrenciesFunc = "GetCurrencies"
 )
 
 type CurrencyClient interface {
-	GetCurrencies() (interface{}, error)
+	GetCurrencies() (map[string]float64, error)
 }
 
 type CurrencyClientDefault struct {
@@ -32,7 +37,7 @@ func NewCurrencyClientDefault() CurrencyClientDefault {
 	}
 }
 
-func (c CurrencyClientDefault) GetCurrencies() (interface{}, error) {
+func (c CurrencyClientDefault) GetCurrencies() (map[string]float64, error) {
 	c.log.Info().Str(utils.Method, getCurrenciesFunc).Msg(utils.InitStr)
 
 	req, err := http.NewRequest(http.MethodGet, currencyEndpoint, nil)
@@ -49,18 +54,17 @@ func (c CurrencyClientDefault) GetCurrencies() (interface{}, error) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	var result map[string]interface{}
+	var result Currencies
 	err = jsoniter.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	currencies, isOk := result["quotes"]
-	if isOk {
-		return currencies, nil
+	if !result.Success {
+		return nil, err2.ErrorTakingCurrencies
 	}
-	return nil, err2.ErrorTakingCurrencies
+	return result.Quotes, nil
 }

@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"github.com/castillofranciscodaniel/golang-beers/provider"
 	"github.com/castillofranciscodaniel/golang-beers/utils"
 	"github.com/rs/zerolog"
@@ -11,6 +12,7 @@ const (
 	productNameLog  = "productName"
 	productIdLog    = "productId"
 	productPriceLog = "productPrice"
+	usd             = "USD"
 )
 
 //go:generate mockgen -destination=../mocks/domain/mockBeerService.go -package=domain github.com/castillofranciscodaniel/golang-beers/domain BeerService
@@ -105,20 +107,37 @@ func (d DefaultBeerService) BoxPrice(id int64, toCurrency string, quantity int) 
 
 	var priceTotal float64
 
-	_, err := d.GetById(id)
+	beer, err := d.GetById(id)
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return priceTotal, err
 	}
 
-	curriencies, err := d.currencyClient.GetCurrencies()
-	d.log.Info().Str(utils.Method, utils.ByIdFunc).
-		Interface("", curriencies).
-		Msg(utils.InitStr)
+	currencies, err := d.currencyClient.GetCurrencies()
+	fromCurrency := beer.GetCurrency()
+
+	if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
+		priceTotal = beer.price * visaPrice
+	} else {
+		var calculateUsdFromCurrency float64
+		if visaPriceFromCurrency, isOkFrom := d.getPrice(currencies, usd, fromCurrency); isOkFrom {
+			// usd to my currency
+			calculateUsdFromCurrency = beer.price / visaPriceFromCurrency
+		}
+		if visaPriceToCurrency, isOkTo := d.getPrice(currencies, usd, toCurrency); isOkTo {
+			priceTotal = calculateUsdFromCurrency * visaPriceToCurrency * float64(quantity)
+		}
+	}
+
 	if err != nil {
 		d.log.Error().Err(err).Str(utils.Method, utils.ByIdFunc).Send()
 		return priceTotal, err
 	}
 	d.log.Info().Str(utils.Method, utils.ByIdFunc).Msg(utils.EndStr)
 	return priceTotal, nil
+}
+
+func (d DefaultBeerService) getPrice(currencies map[string]float64, fromCurrency, toCurrency string) (float64, bool) {
+	price, isOK := currencies[fmt.Sprint("%v/%v", fromCurrency, toCurrency)]
+	return price, isOK
 }
