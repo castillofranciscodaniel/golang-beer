@@ -281,25 +281,29 @@ func Test_BoxPrice_should_return_err_if_query_param_quantity_is_not_a_number(t *
 	}
 }
 
-//func Test(t *testing.T) {
-//
-//	tearDown := setUp(t)
-//	defer tearDown()
-//
-//	beer, _ := makeBeerUsd()
-//
-//	mockService.EXPECT().GetById(beer.GetId()).Return(&beer, nil)
-//	mockService.EXPECT().BoxPrice(beer.GetId(), "CLP", 6).Return(float64(740), nil)
-//
-//	router.Get("/beers/{beerId:[0-9]+}/boxprice", beerHandler.BoxPrice)
-//
-//	request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", beer.GetId()), nil)
-//
-//	recorder := httptest.NewRecorder()
-//	router.ServeHTTP(recorder, request)
-//
-//	// Assert
-//	if recorder.Code != http.StatusOK {
-//		t.Error("Failed while testing the status code")
-//	}
-//}
+func Test_BoxPrice_should_return_not_found_if_id_beer_not_exist(t *testing.T) {
+
+	tearDown := setUp(t)
+	defer tearDown()
+
+	id := int64(2)
+
+	mockService.EXPECT().BoxPrice(id, "USD", 5).Return(float64(0), err.NotFoundError)
+
+	router.Get("/beers/{beerId}/boxprice", beerHandler.BoxPrice)
+
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/beers/%v/boxprice", id), nil)
+	query := req.URL.Query()
+	query.Add("currency", "USD")
+	query.Add("quantity", "5")
+
+	req.URL.RawQuery = query.Encode()
+
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
+
+	// Assert
+	if recorder.Code != http.StatusNotFound {
+		t.Error("Failed while testing the status code")
+	}
+}
