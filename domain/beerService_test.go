@@ -25,11 +25,26 @@ func setUp(t *testing.T) func() {
 	}
 }
 
-func makeBeer() (Beer, error) {
+func makeBeerUsd() (Beer, error) {
 	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "USD")
 }
 
-func makeValidBeerSql() BeerSql {
+func makeValidBeerSqlClp() BeerSql {
+	return BeerSql{
+		Id:       sql.NullInt64{Int64: 2, Valid: true},
+		Name:     sql.NullString{String: "Patagonia", Valid: true},
+		Brewery:  sql.NullString{String: "Norte", Valid: true},
+		Country:  sql.NullString{String: "Chile", Valid: true},
+		Price:    sql.NullFloat64{Float64: 740, Valid: true},
+		Currency: sql.NullString{String: "CLP", Valid: true},
+	}
+}
+
+func makeBeerClp() (Beer, error) {
+	return NewBeer(2, "Patagonia", "Norte", "Chile", 740, "CLP")
+}
+
+func makeValidBeerSqlUsd() BeerSql {
 	return BeerSql{
 		Id:       sql.NullInt64{Int64: 2, Valid: true},
 		Name:     sql.NullString{String: "Patagonia", Valid: true},
@@ -71,8 +86,8 @@ func Test_BoxPrice_same_visa(t *testing.T) {
 
 	quantity := 6
 
-	beer, _ := makeBeer()
-	beerSql := makeValidBeerSql()
+	beer, _ := makeBeerUsd()
+	beerSql := makeValidBeerSqlUsd()
 
 	mockCurrencyClient.EXPECT().GetCurrencies().Return(nil, nil)
 	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
@@ -94,8 +109,8 @@ func Test_BoxPrice_usd_to_another_visa(t *testing.T) {
 
 	quantity := 6
 
-	beer, _ := makeBeer()
-	beerSql := makeValidBeerSql()
+	beer, _ := makeBeerUsd()
+	beerSql := makeValidBeerSqlUsd()
 	currency := makeCurrencies()
 	toCurrency := "CLP"
 
@@ -120,8 +135,8 @@ func Test_BoxPrice_currency_not_allowed(t *testing.T) {
 
 	quantity := 6
 
-	beer, _ := makeBeer()
-	beerSql := makeValidBeerSql()
+	beer, _ := makeBeerUsd()
+	beerSql := makeValidBeerSqlUsd()
 	currency := makeCurrencies()
 	toCurrency := ""
 
@@ -131,6 +146,32 @@ func Test_BoxPrice_currency_not_allowed(t *testing.T) {
 	_, err := beerService.BoxPrice(beer.GetId(), toCurrency, quantity)
 	if err != err2.CurrencyNotAllowedError {
 		t.Error("unexpected error: ", err.Error())
+	}
+
+}
+
+func Test_BoxPrice_any_visa_to_usd(t *testing.T) {
+	tearDown := setUp(t)
+	defer tearDown()
+
+	quantity := 6
+
+	beer, _ := makeBeerClp()
+	beerSql := makeValidBeerSqlClp()
+	currency := makeCurrencies()
+	toCurrency := "USD"
+
+	mockCurrencyClient.EXPECT().GetCurrencies().Return(currency.Quotes, nil)
+	mockBeerRepository.EXPECT().GetById(beerSql.Id.Int64).Return(&beerSql, nil)
+
+	price, err := beerService.BoxPrice(beer.GetId(), toCurrency, quantity)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	expectedPrice := float64(quantity) * beer.price / currency.Quotes[fmt.Sprintf("%v%v", toCurrency, beer.GetCurrency())]
+	if price != expectedPrice {
+		t.Error("Failed distinct price total")
 	}
 
 }

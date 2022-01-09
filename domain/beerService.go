@@ -122,16 +122,22 @@ func (d DefaultBeerService) BoxPrice(id int64, toCurrency string, quantity int) 
 
 	fromCurrency := beer.GetCurrency()
 
-	if toCurrency == beer.currency {
+	if toCurrency == beer.currency { // same visa
 		changeTotal = beer.price
-	} else if fromCurrency == "USD" {
+	} else if fromCurrency == "USD" { // USD --> any visa
 		if priceVisa, isOK := currencies[fmt.Sprintf("%v%v", beer.GetCurrency(), toCurrency)]; isOK {
 			changeTotal = beer.price * priceVisa
 		} else {
 			return 0, err2.CurrencyNotAllowedError
 		}
 
-	} else if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk {
+	} else if toCurrency == "USD" { // any visa --> USD
+		if priceVisa, isOK := currencies[fmt.Sprintf("%v%v", toCurrency, beer.GetCurrency())]; isOK {
+			changeTotal = beer.price / priceVisa
+		} else {
+			return 0, err2.CurrencyNotAllowedError
+		}
+	} else if visaPrice, isOk := d.getPrice(currencies, fromCurrency, toCurrency); isOk { // any visa not usd --> any visa not usd
 
 		changeTotal = beer.price * visaPrice
 	} else {
